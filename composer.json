@@ -1,0 +1,37 @@
+{  
+    "name": "bingo-soft/juel",
+    "license": "MIT",
+    "authors": [{
+        "name": "Bingo-Soft",
+        "email": "bingosoft@bk.ru"
+    }],
+    "description": "Implementation of Java Unified Expression Language in PHP",
+    "keywords": ["php", "juel", "expression", "language", "el"],
+    "homepage": "https://github.com/bingo-soft/juel",
+    "type": "project",
+    "config": {
+        "vendor-dir": "./vendor",
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    },
+    "require": {
+        "php": "^7.4 || ^8.0",
+        "bingo-soft/el": "^1.0"
+    },
+    "require-dev": {
+        "doctrine/coding-standard": "*",
+        "squizlabs/php_codesniffer": "*",
+        "phpunit/phpunit": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Juel\\": "./src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": { 
+            "Tests\\": "./tests"
+        }
+    }
+}
