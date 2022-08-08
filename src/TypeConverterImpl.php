@@ -6,6 +6,7 @@ use El\ELException;
 
 class TypeConverterImpl extends TypeConverter
 {
+    private const BUILT_IN_TYPES = ['boolean', 'bool', 'double', 'float', 'int', 'integer', 'string'];
     private function throwException($value, string $shouldBe)
     {
         $type = gettype($value);
@@ -113,6 +114,10 @@ class TypeConverterImpl extends TypeConverter
         }
         if (is_array($value) && $type == "array") {
             return $value;
+        }
+        //object as a parent class for all built-in types
+        if ($type == 'object' && in_array(gettype($value), self::BUILT_IN_TYPES)) {
+            return $this->coerceToType($value, gettype($value));
         }
         $this->throwException($value, $type);
     }
