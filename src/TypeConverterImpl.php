@@ -119,6 +119,9 @@ class TypeConverterImpl extends TypeConverter
         if ($type == 'object' && in_array(gettype($value), self::BUILT_IN_TYPES)) {
             return $this->coerceToType($value, gettype($value));
         }
+        if ($type == 'object' && is_object($value)) {
+            return $value;
+        }
         $this->throwException($value, $type);
     }
 
