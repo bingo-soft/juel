@@ -96,7 +96,7 @@ interface ExpressionNode extends Node
      *            expected method argument types
      * @return method information or <code>null</code>
      */
-    public function getMethodInfo(Bindings $bindings, ELContext $context, ?string $returnType = null, ?array $paramTypes = []): ?MethodInfo;
+    public function getMethodInfo(Bindings $bindings, ELContext $context, ?string $returnType = null): ?MethodInfo;
 
     /**
      * Invoke method.

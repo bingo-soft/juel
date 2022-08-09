@@ -75,8 +75,7 @@ class ExpressionFactoryImpl extends ExpressionFactory
     public function createMethodExpression(
         ELContext $context,
         string $expression,
-        ?string $expectedReturnType = null,
-        ?array $expectedParamTypes = []
+        ?string $expectedReturnType = null
     ): MethodExpression {
         return new TreeMethodExpression(
             $this->store,
@@ -84,8 +83,7 @@ class ExpressionFactoryImpl extends ExpressionFactory
             $context->getVariableMapper(),
             $this->converter,
             $expression,
-            $expectedReturnType,
-            $expectedParamTypes
+            $expectedReturnType
         );
     }
 }

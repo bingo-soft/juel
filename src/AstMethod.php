@@ -42,7 +42,7 @@ class AstMethod extends AstNode
         throw new ELException(LocalMessages::get("error.value.set.rvalue", $this->getStructuralId($bindings)));
     }
 
-    public function getMethodInfo(Bindings $bindings, ELContext $context, ?string $returnType = null, ?array $paramTypes = []): ?MethodInfo
+    public function getMethodInfo(Bindings $bindings, ELContext $context, ?string $returnType = null): ?MethodInfo
     {
         return null;
     }
@@ -73,21 +73,21 @@ class AstMethod extends AstNode
         return $this->invoke($bindings, $context);
     }
 
-    public function invoke(Bindings $bindings, ELContext $context, ?string $returnType = null, ?array $paramTypes = [], ?array $paramValues = [])
+    public function invoke(Bindings $bindings, ELContext $context, ?string $returnType = null, ?array $paramValues = [])
     {
         $base = $this->property->getPrefix()->eval($bindings, $context);
         if ($base === null) {
             throw new PropertyNotFoundException(LocalMessages::get("error.property.base.null", $property->getPrefix()));
         }
-        $method = $property->getProperty($bindings, $context);
+        $method = $this->property->getProperty($bindings, $context);
         if ($method === null) {
             throw new PropertyNotFoundException(LocalMessages::get("error.property.method.notfound", "null", $base));
         }
         $name = $bindings->convert($method, "string");
-        $paramValues = $params->eval($bindings, $context);
+        $paramValues = $this->params->eval($bindings, $context);
 
         $context->setPropertyResolved(false);
-        $result = $context->getELResolver()->invoke($context, $base, $name, $paramTypes, $paramValues);
+        $result = $context->getELResolver()->invoke($context, $base, $name, $paramValues);
         if (!$context->isPropertyResolved()) {
             throw new MethodNotFoundException(LocalMessages::get("error.property.method.notfound", $name, gettype($base)));
         }

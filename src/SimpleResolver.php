@@ -103,8 +103,8 @@ class SimpleResolver extends ELResolver
         $this->delegate->setValue($context, $base, $property, $value);
     }
 
-    public function invoke(?ELContext $context, $base, $method, ?array $paramTypes = [], ?array $params = [])
+    public function invoke(?ELContext $context, $base, $method, array $params = [])
     {
-        return $this->delegate->invoke($context, $base, $method, $paramTypes, $params);
+        return $this->delegate->invoke($context, $base, $method, $params);
     }
 }

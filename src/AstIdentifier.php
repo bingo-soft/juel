@@ -104,7 +104,7 @@ class AstIdentifier extends AstNode implements IdentifierNode
         return $result;
     }
 
-    protected function getMethod(Bindings $bindings, ELContext $context, ?string $returnType = null, ?array $paramTypes = []): \ReflectionMethod
+    protected function getMethod(Bindings $bindings, ELContext $context, ?string $returnType = null): \ReflectionMethod
     {
         $value = $this->eval($bindings, $context);
         if ($value === null) {
@@ -120,15 +120,15 @@ class AstIdentifier extends AstNode implements IdentifierNode
         throw new MethodNotFoundException(LocalMessages::get("error.identifier.method.notamethod", $this->name, gettype($value)));
     }
 
-    public function getMethodInfo(Bindings $bindings, ELContext $context, ?string $returnType = null, ?array $paramTypes = []): ?MethodInfo
+    public function getMethodInfo(Bindings $bindings, ELContext $context, ?string $returnType = null): ?MethodInfo
     {
-        $method = $this->getMethod($bindings, $context, $returnType, $paramTypes);
-        return new MethodInfo($method->getName(), $method->getReturnType(), $paramTypes);
+        $method = $this->getMethod($bindings, $context, $returnType);
+        return new MethodInfo($method->getName(), $method->getReturnType());
     }
 
-    public function invoke(Bindings $bindings, ELContext $context, ?string $returnType = null, ?array $paramTypes = [], ?array $params = [])
+    public function invoke(Bindings $bindings, ELContext $context, ?string $returnType = null, ?array $params = [])
     {
-        $method = $this->getMethod($bindings, $context, $returnType, $paramTypes);
+        $method = $this->getMethod($bindings, $context, $returnType);
         try {
             return $method->invoke(null, ...$params);
         } catch (\Exception $e) {

@@ -58,12 +58,12 @@ class AstText extends AstNode
         return $this->value;
     }
 
-    public function getMethodInfo(Bindings $bindings, ELContext $context, ?string $returnType = null, ?array $paramTypes = []): ?MethodInfo
+    public function getMethodInfo(Bindings $bindings, ELContext $context, ?string $returnType = null): ?MethodInfo
     {
         return null;
     }
 
-    public function invoke(Bindings $bindings, ELContext $context, ?string $returnType = null, ?array $paramTypes = [], ?array $paramValues = [])
+    public function invoke(Bindings $bindings, ELContext $context, ?string $returnType = null, array $paramValues = [])
     {
         return $returnType === null ? $this->value : $bindings->convert($this->value, $returnType);
     }

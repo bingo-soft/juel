@@ -24,9 +24,9 @@ abstract class AstProperty extends AstNode
         $this->strict = $strict;
     }
 
-    abstract protected function getProperty(Bindings $bindings, ELContext $context);
+    abstract public function getProperty(Bindings $bindings, ELContext $context);
 
-    protected function getPrefix(): AstNode
+    public function getPrefix(): AstNode
     {
         return $this->prefix;
     }
@@ -131,7 +131,7 @@ abstract class AstProperty extends AstNode
         }
     }
 
-    protected function findMethod(string $name, string $clazz, ?string $returnType = null, ?array $paramTypes = []): \ReflectionMethod
+    protected function findMethod(string $name, string $clazz, ?string $returnType = null): \ReflectionMethod
     {
         $method = null;
         try {
@@ -145,7 +145,7 @@ abstract class AstProperty extends AstNode
         return $method;
     }
 
-    public function getMethodInfo(Bindings $bindings, ELContext $context, ?string $returnType = null, ?array $paramTypes = []): ?MethodInfo
+    public function getMethodInfo(Bindings $bindings, ELContext $context, ?string $returnType = null): ?MethodInfo
     {
         $base = $this->prefix->eval($bindings, $context);
         if ($base === null) {
@@ -156,11 +156,11 @@ abstract class AstProperty extends AstNode
             throw new \Exception(LocalMessages::get("error.property.method.notfound", "null", $base));
         }
         $name = $bindings->convert($property, "string");
-        $method = $this->findMethod($name, get_class($base), $returnType, $paramTypes);
-        return new MethodInfo($method->getName(), $method->getReturnType(), $paramTypes);
+        $method = $this->findMethod($name, get_class($base), $returnType);
+        return new MethodInfo($method->getName(), $method->getReturnType());
     }
 
-    public function invoke(Bindings $bindings, ELContext $context, ?string $returnType = null, ?array $paramTypes = [], ?array $paramValues = [])
+    public function invoke(Bindings $bindings, ELContext $context, ?string $returnType = null, array $paramValues = [])
     {
         $base = $this->prefix->eval($bindings, $context);
         if ($base === null) {
@@ -171,7 +171,7 @@ abstract class AstProperty extends AstNode
             throw new \Exception(LocalMessages::get("error.property.method.notfound", "null", $base));
         }
         $name = $bindings->convert($property, "string");
-        $method = $this->findMethod($name, get_class($base), $returnType, $paramTypes);
+        $method = $this->findMethod($name, get_class($base), $returnType);
         try {
             return $method->invoke($base, ...$paramValues);
         } catch (\Exception $e) {

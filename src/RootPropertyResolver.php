@@ -76,7 +76,7 @@ class RootPropertyResolver extends ELResolver
         }
     }
 
-    public function invoke(?ELContext $context, $base, $method, ?array $paramTypes = [], ?array $params = [])
+    public function invoke(?ELContext $context, $base, $method, ?array $params = [])
     {
         if ($this->resolve($context, $base, $method)) {
             throw new \Exception("Cannot invoke method " . $method . " on null");

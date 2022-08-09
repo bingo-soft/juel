@@ -17,11 +17,8 @@ class TreeMethodExpression extends MethodExpression
     private $bindings;
     private $expr;
     private $type;
-    private $types;
     private $deferred;
-
     private $node;
-
     private $structure;
 
     /**
@@ -35,9 +32,8 @@ class TreeMethodExpression extends MethodExpression
      * @param variables the variable mapper used to bind variables
      * @param expr the expression string
      * @param returnType the expected return type (may be <code>null</code>)
-     * @param paramTypes the expected parameter types (must not be <code>null</code> for lvalues)
      */
-    public function __construct(TreeStore $store, ?FunctionMapper $functions, ?VariableMapper $variables, ?TypeConverter $converter, string $expr, ?string $returnType = null, ?array $paramTypes = [])
+    public function __construct(TreeStore $store, ?FunctionMapper $functions, ?VariableMapper $variables, ?TypeConverter $converter, string $expr, ?string $returnType = null)
     {
         $tree = $store->get($expr);
 
@@ -45,7 +41,6 @@ class TreeMethodExpression extends MethodExpression
         $this->bindings = $tree->bind($functions, $variables, $converter);
         $this->expr = $expr;
         $this->type = $returnType;
-        $this->types = $paramTypes;
         $this->node = $tree->getRoot();
         $this->deferred = $tree->isDeferred();
 
@@ -67,7 +62,6 @@ class TreeMethodExpression extends MethodExpression
             'bindings' => serialize($this->bindings),
             'expr' => $this->expr,
             'type' => $this->type,
-            'types' => $this->types,
             'deferred' => $this->deferred
         ]);
     }
@@ -79,7 +73,6 @@ class TreeMethodExpression extends MethodExpression
         $this->bindings = unserialize($json->bindings);
         $this->expr = $json->expr;
         $this->type = $json->type;
-        $this->types = $json->types;
         $this->deferred = $json->deferred;
         $this->node = $this->builder->build($this->expr)->getRoot();
     }
@@ -100,7 +93,7 @@ class TreeMethodExpression extends MethodExpression
     */
     public function getMethodInfo(ELContext $context): MethodInfo
     {
-        return $this->node->getMethodInfo($this->bindings, $context, $this->type, $this->types);
+        return $this->node->getMethodInfo($this->bindings, $context, $this->type);
     }
 
     public function getExpressionString(): ?string
@@ -115,9 +108,9 @@ class TreeMethodExpression extends MethodExpression
     * @return method result or <code>null</code> if this is a literal text expression
     * @throws ELException if evaluation fails (e.g. suitable method not found)
     */
-    public function invoke(ELContext $context, ?array $paramValues = [])
+    public function invoke(ELContext $context, array $paramValues = [])
     {
-        return $this->node->invoke($this->bindings, $context, $this->type, $this->types, $paramValues);
+        return $this->node->invoke($this->bindings, $context, $this->type, $paramValues);
     }
 
     /**
@@ -164,9 +157,6 @@ class TreeMethodExpression extends MethodExpression
                 return false;
             }
             if ($this->type != $obj->type) {
-                return false;
-            }
-            if ($this->types != $obj->types) {
                 return false;
             }
             return $this->getStructuralId() == $obj->getStructuralId() && $this->bindings->equals($obj->bindings);

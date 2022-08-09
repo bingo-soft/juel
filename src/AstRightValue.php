@@ -43,7 +43,7 @@ abstract class AstRightValue extends AstNode
         throw new ELException(LocalMessages::get("error.value.set.rvalue", $this->getStructuralId($bindings)));
     }
 
-    public function getMethodInfo(Bindings $bindings, ELContext $context, ?string $returnType = null, ?array $paramTypes = []): ?MethodInfo
+    public function getMethodInfo(Bindings $bindings, ELContext $context, ?string $returnType = null): ?MethodInfo
     {
         return null;
     }

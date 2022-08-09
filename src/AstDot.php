@@ -14,7 +14,7 @@ class AstDot extends AstProperty
         $this->property = $property;
     }
 
-    protected function getProperty(Bindings $bindings, ELContext $context)
+    public function getProperty(Bindings $bindings, ELContext $context)
     {
         return $this->property;
     }

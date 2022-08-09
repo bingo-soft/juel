@@ -56,14 +56,14 @@ class AstEval extends AstNode
         $b .= "}";
     }
 
-    public function getMethodInfo(Bindings $bindings, ELContext $context, ?string $returnType = null, ?array $paramTypes = []): ?MethodInfo
+    public function getMethodInfo(Bindings $bindings, ELContext $context, ?string $returnType = null): ?MethodInfo
     {
-        return $this->child->getMethodInfo($bindings, $context, $returnType, $paramTypes);
+        return $this->child->getMethodInfo($bindings, $context, $returnType);
     }
 
-    public function invoke(Bindings $bindings, ELContext $context, ?string $returnType = null, ?array $paramTypes = [], ?array $paramValues = [])
+    public function invoke(Bindings $bindings, ELContext $context, ?string $returnType = null, array $paramValues = [])
     {
-        return $this->child->invoke($bindings, $context, $returnType, $paramTypes, $paramValues);
+        return $this->child->invoke($bindings, $context, $returnType, $paramValues);
     }
 
     public function getType(Bindings $bindings, ELContext $context): ?string
