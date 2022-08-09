@@ -8,7 +8,8 @@ use El\{
     ELContext,
     ELResolver,
     ListELResolver,
-    MapELResolver
+    MapELResolver,
+    ObjectELResolver
 };
 
 class SimpleResolver extends ELResolver
@@ -24,21 +25,38 @@ class SimpleResolver extends ELResolver
      * Create a read/write resolver capable of resolving top-level identifiers. Everything else is
      * passed to the supplied delegate.
      */
-    public function __construct(?ELResolver $resolver = null, bool $readOnly = false)
+    public function __construct(/*ELResolver|bool|null*/$resolverOrReadonly = null, bool $readOnly = null)
     {
         if (self::$DEFAULT_RESOLVER_READ_ONLY === null) {
             self::$DEFAULT_RESOLVER_READ_ONLY = new CompositeELResolver();
             self::$DEFAULT_RESOLVER_READ_ONLY->add(new ArrayELResolver(true));
             self::$DEFAULT_RESOLVER_READ_ONLY->add(new ListELResolver(true));
             self::$DEFAULT_RESOLVER_READ_ONLY->add(new MapELResolver(true));
+            self::$DEFAULT_RESOLVER_READ_ONLY->add(new ObjectELResolver(true));
         }
         if (self::$DEFAULT_RESOLVER_READ_WRITE === null) {
             self::$DEFAULT_RESOLVER_READ_WRITE = new CompositeELResolver();
             self::$DEFAULT_RESOLVER_READ_WRITE->add(new ArrayELResolver(false));
             self::$DEFAULT_RESOLVER_READ_WRITE->add(new ListELResolver(false));
             self::$DEFAULT_RESOLVER_READ_WRITE->add(new MapELResolver(false));
+            self::$DEFAULT_RESOLVER_READ_ONLY->add(new ObjectELResolver(false));
         }
-        $resolver = $resolver ?? ($readOnly ? self::$DEFAULT_RESOLVER_READ_ONLY : self::$DEFAULT_RESOLVER_READ_WRITE);
+
+        if ($resolverOrReadonly !== null && is_bool($resolverOrReadonly)) {
+            if ($resolverOrReadonly) {
+                $resolver = self::$DEFAULT_RESOLVER_READ_ONLY;
+            } else {
+                $resolver = self::$DEFAULT_RESOLVER_READ_WRITE;
+            }
+            $readOnly = $resolverOrReadonly;
+        } elseif ($resolverOrReadonly !== null && $resolverOrReadonly instanceof ELResolver) {
+            $resolver = $resolverOrReadonly;
+            $readOnly = $readOnly ?? false;
+        } else {
+            $resolver = self::$DEFAULT_RESOLVER_READ_WRITE;
+            $readOnly = false;
+        }
+
         $this->delegate = new CompositeELResolver();
         $this->root = new RootPropertyResolver($readOnly);
         $this->delegate->add($this->root);
