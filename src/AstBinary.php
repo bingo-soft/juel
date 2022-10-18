@@ -33,6 +33,7 @@ class AstBinary extends AstRightValue
                 {
                     return NumberOperations::add($converter, $o1, $o2);
                 }
+
                 public function __toString()
                 {
                     return "+";
@@ -52,6 +53,7 @@ class AstBinary extends AstRightValue
                     $l = $bindings->convert($left->eval($bindings, $context), "boolean");
                     return $l == true ? $bindings->convert($right->eval($bindings, $context), "boolean") : false;
                 }
+
                 public function __toString()
                 {
                     return "&&";
@@ -70,6 +72,7 @@ class AstBinary extends AstRightValue
                 {
                     return NumberOperations::div($converter, $o1, $o2);
                 }
+
                 public function __toString()
                 {
                     return "/";
@@ -88,6 +91,7 @@ class AstBinary extends AstRightValue
                 {
                     return BooleanOperations::eq($converter, $o1, $o2);
                 }
+
                 public function __toString()
                 {
                     return "==";
@@ -124,6 +128,7 @@ class AstBinary extends AstRightValue
                 {
                     return BooleanOperations::gt($converter, $o1, $o2);
                 }
+
                 public function __toString()
                 {
                     return ">";
@@ -142,6 +147,7 @@ class AstBinary extends AstRightValue
                 {
                     return BooleanOperations::le($converter, $o1, $o2);
                 }
+
                 public function __toString()
                 {
                     return "<=";
@@ -160,6 +166,7 @@ class AstBinary extends AstRightValue
                 {
                     return BooleanOperations::lt($converter, $o1, $o2);
                 }
+
                 public function __toString()
                 {
                     return "<";
@@ -178,6 +185,7 @@ class AstBinary extends AstRightValue
                 {
                     return NumberOperations::mod($converter, $o1, $o2);
                 }
+
                 public function __toString()
                 {
                     return "%";
@@ -196,6 +204,7 @@ class AstBinary extends AstRightValue
                 {
                     return NumberOperations::mul($converter, $o1, $o2);
                 }
+
                 public function __toString()
                 {
                     return "*";
@@ -214,6 +223,7 @@ class AstBinary extends AstRightValue
                 {
                     return BooleanOperations::ne($converter, $o1, $o2);
                 }
+
                 public function __toString()
                 {
                     return "!=";
@@ -233,6 +243,7 @@ class AstBinary extends AstRightValue
                     $l = $bindings->convert($left->eval($bindings, $context), "boolean");
                     return $l == true ? true : $bindings->convert($right->eval($bindings, $context), "boolean");
                 }
+
                 public function __toString()
                 {
                     return "||";
@@ -251,6 +262,7 @@ class AstBinary extends AstRightValue
                 {
                     return NumberOperations::sub($converter, $o1, $o2);
                 }
+                
                 public function __toString()
                 {
                     return "-";

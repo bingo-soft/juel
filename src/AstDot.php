@@ -19,6 +19,23 @@ class AstDot extends AstProperty
         return $this->property;
     }
 
+    public function getMetaObjectProperty(): string
+    {
+        $props = [ $this->property ];
+        $flag = true;
+        $cur = $this->prefix;
+        while ($cur !== null) {
+            if ($cur instanceof AstDot) {
+                $props[] = $cur->property;
+                $cur = $cur->prefix;
+            } elseif ($cur instanceof AstIdentifier) {
+                $props[] = strval($cur);
+                $cur = null;
+            }
+        }
+        return implode('.', array_reverse($props));
+    }
+
     public function __toString()
     {
         return ". " . $this->property;

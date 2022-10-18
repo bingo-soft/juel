@@ -32,7 +32,7 @@ class AstFunction extends AstRightValue implements FunctionNode
      * @throws InvocationTargetException
      * @throws IllegalAccessException
      */
-    public function invoke(Bindings $bindings, ELContext $context, $base, \ReflectionMethod $method)
+    public function invoke(Bindings $bindings, ELContext $context, $base, /*\ReflectionMethod | \ReflectionFunction */$method)
     {
         $parameters = $method->getParameters();
         $types = [];
@@ -55,14 +55,34 @@ class AstFunction extends AstRightValue implements FunctionNode
                 $params[$i] = $param;
             }
         }
-        return $method->invoke($base, ...$params);
+        if ($method instanceof \ReflectionMethod) {
+            return $method->invoke($base, ...$params);
+        } else { /* \ReflectionFunction */
+            return $method->invoke(...$params);
+        }
     }
 
     public function eval(Bindings $bindings, ELContext $context)
     {
         $method = $bindings->getFunction($this->index);
+
+        //Check global scope
+        $base = null;
+        if ($method === null && function_exists($this->name)) {
+            $method = new \ReflectionFunction($this->name);
+        } else {//Check context variables
+            $resolver = $context->getELResolver()->getRootPropertyResolver();
+            $methodOwner = $resolver->getMethodOwner($this->name);
+            if ($methodOwner !== null) {
+                $base = $methodOwner->getOriginalObject();
+                $method = $methodOwner->getMethod($this->name);
+                if ($method->isPrivate() || $method->isProtected()) {
+                    $method->setAccessible(true);
+                }
+            }
+        }
         try {
-            return $this->invoke($bindings, $context, null, $method);
+            return $this->invoke($bindings, $context, $base, $method);
         } catch (\Exception $e) {
             throw new ELException(LocalMessages::get("error.function.invocation", $this->name));
         }

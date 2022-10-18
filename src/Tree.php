@@ -89,16 +89,14 @@ class Tree
                     $method = $fnMapper->resolveFunction(substr($image, 0, $colon), substr($image, $colon + 1));
                 }
                 if ($method === null) {
-                    throw new ELException(LocalMessages::get("error.function.notfound", $image));
+                    //throw new ELException(LocalMessages::get("error.function.notfound", $image));
                 }
-                if ($node->isVarArgs() && $method->isVariadic()) {
+                if ($node->isVarArgs() && $method !== null && $method->isVariadic()) {
                     if ($method->getNumberOfParameters() > $node->getParamCount() + 1) {
                         throw new ELException(LocalMessages::get("error.function.params", $image));
                     }
-                } else {
-                    if ($method->getNumberOfParameters() != $node->getParamCount()) {
-                        throw new ELException(LocalMessages::get("error.function.params", $image));
-                    }
+                } elseif ($method !== null && $method->getNumberOfParameters() != $node->getParamCount()) {
+                    throw new ELException(LocalMessages::get("error.function.params", $image));
                 }
                 $methods[$node->getIndex()] = $method;
             }

@@ -330,10 +330,10 @@ class Scanner
             return $this->nextNumber();
         }
 
-        if (preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $c1)) {
+        if (preg_match('/^[a-zA-Z]+$/', $c1)) {
             $i = $this->position + 1;
             $l = strlen($this->input);
-            while ($i < $l && preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $this->input[$i])) {
+            while ($i < $l && preg_match('/^[a-zA-Z0-9_]+$/', $this->input[$i])) {
                 $i++;
             }
             $name = substr($this->input, $this->position, $i - $this->position);

@@ -97,7 +97,7 @@ class Parser
         return new AstComposite($nodes);
     }
 
-    protected function createAstDot(AstNode $base, string $property, bool $lvalue): AstDot
+    protected function createAstDot(AstNode $base, string $property, ?string $dottedProperty, bool $lvalue): AstDot
     {
         return new AstDot($base, $property, $lvalue);
     }
@@ -520,12 +520,13 @@ class Parser
             }
             $lvalue = false;
         }
+        $props = [];
         while (true) {
             switch ($this->token->getSymbol()) {
                 case Symbol::DOT:
                     $this->consumeToken();
                     $name = $this->consumeToken(Symbol::IDENTIFIER)->getImage();
-                    $dot = $this->createAstDot($v, $name, $lvalue);
+                    $dot = $this->createAstDot($v, $name, null, $lvalue);
                     if ($this->token->getSymbol() == Symbol::LPAREN && $this->context->isEnabled(Feature::METHOD_INVOCATIONS)) {
                         $v = $this->createAstMethod($dot, $this->params());
                     } else {

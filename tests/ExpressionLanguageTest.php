@@ -14,6 +14,7 @@ use Juel\{
     TreeValueExpression
 };
 use El\ObjectELResolver;
+use Util\Reflection\MetaObject;
 
 class ExpressionLanguageTest extends TestCase
 {
@@ -69,8 +70,8 @@ class ExpressionLanguageTest extends TestCase
 
         $fmapper = $context->getFunctionMapper();
 
-        $this->assertEquals(1, $fmapper->resolveFunction("", "sin")->invoke(null, M_PI / 2));
-        $this->assertEquals(0, $fmapper->resolveFunction("", "cos")->invoke(null, M_PI / 2));
+        $this->assertEqualsWithDelta(1, $fmapper->resolveFunction("", "sin")->invoke(null, M_PI / 2), 7e-17);
+        $this->assertEqualsWithDelta(0, $fmapper->resolveFunction("", "cos")->invoke(null, M_PI / 2), 7e-17);
 
         $expr = $factory->createValueExpression($context, '${sin(pi / 2) + cos(pi / 4) * sin(pi / 3)}', null, "double");
         $this->assertEquals(sin(M_PI / 2) + cos(M_PI / 4) * sin(M_PI / 3), $expr->getValue($context));
@@ -98,6 +99,24 @@ class ExpressionLanguageTest extends TestCase
 
         $expr = $factory->createValueExpression($context, '${true and false}', null, "boolean");
         $this->assertFalse($expr->getValue($context));
+
+        $expr = $factory->createValueExpression($context, '#{true == true}', null, "boolean");
+        $this->assertTrue($expr->getValue($context));
+
+        $expr = $factory->createValueExpression($context, '#{1 >= 1}', null, "boolean");
+        $this->assertTrue($expr->getValue($context));
+
+        $expr = $factory->createValueExpression($context, '#{1 <= 1}', null, "boolean");
+        $this->assertTrue($expr->getValue($context));
+
+        $expr = $factory->createValueExpression($context, '#{1 > 1}', null, "boolean");
+        $this->assertFalse($expr->getValue($context));
+
+        $expr = $factory->createValueExpression($context, '#{1 < 1}', null, "boolean");
+        $this->assertFalse($expr->getValue($context));
+
+        $expr = $factory->createValueExpression($context, '#{null == null}', null, "boolean");
+        $this->assertTrue($expr->getValue($context));
     }
 
     public function testMethodInvocation(): void
@@ -143,5 +162,66 @@ class ExpressionLanguageTest extends TestCase
         $store = new TreeStore(new Builder(), null);
         $context = new SimpleContext();
         $this->assertFalse((new TreeValueExpression($store, null, null, null, '${property_foo}', "object"))->isReadOnly($context));
+    }
+
+    public function testOgnlSyntax(): void
+    {
+        $context = new SimpleContext();
+        $simple = new SimpleClass();
+        $factory = new ExpressionFactoryImpl();
+        $context->getELResolver()->setValue($context, null, "base", $simple);
+        $context->getELResolver()->setValue($context, null, "var", 3.2);
+
+        $expr = $factory->createValueExpression($context, '${2.1 + var + propFloat + privateFloat + cos(0) + foo() + goo()}', null, "double");   
+        $this->assertEqualsWithDelta(20.17, $expr->getValue($context), 1e-14);
+    }
+
+    public function testMetaObjectWithOgnlSyntax(): void
+    {
+        $context = new SimpleContext();
+        $wrapper = new SimpleClass();
+        $simple = new MetaObject($wrapper);
+        $factory = new ExpressionFactoryImpl();
+        $context->getELResolver()->setValue($context, null, "base", $simple);
+        $context->getELResolver()->setValue($context, null, "var", 3.2);
+
+        $expr = $factory->createValueExpression($context, '${2.1 + var + propFloat + privateFloat + cos(0) + foo() + goo()}', null, "double");   
+        $this->assertEqualsWithDelta(20.17, $expr->getValue($context), 1e-14);
+    }
+
+    public function testAlphaNumericPropertyAndMethod(): void
+    {
+        $context = new SimpleContext();
+        $simple = new SimpleClass();
+        $factory = new ExpressionFactoryImpl();
+        $context->getELResolver()->setValue($context, null, "base", $simple);
+        $expr = $factory->createValueExpression($context, '${alpha1 + beta2()}', null, "integer");   
+        $this->assertEquals(107, $expr->getValue($context));
+    }
+
+    public function testNestedPropertyInMetaObject(): void
+    {
+        $context = new SimpleContext();
+
+        $rich1 = new RichType();
+        $meta1 = new MetaObject($rich1);
+        $meta1->setValue("richType.richType.richField", 10);
+
+        $rich2 = new RichType();
+        $meta2 = new MetaObject($rich2);
+        $meta2->setValue("richType.richField", 23);
+
+        $simple = new SimpleClass();
+        $factory = new ExpressionFactoryImpl();
+        $context->getELResolver()->setValue($context, null, "base", $simple);
+
+        $factory = new ExpressionFactoryImpl();        
+        
+        $context->getELResolver()->setValue($context, null, "first", $meta1);
+        $context->getELResolver()->setValue($context, null, "second", $meta2);
+        $context->getELResolver()->setValue($context, null, "simple", $simple);
+        
+        $expr = $factory->createValueExpression($context, '${richType.richType.richField + 11 + beta2() + richType.richField + alpha1}', null, "integer");
+        $this->assertEquals(151, $expr->getValue($context));
     }
 }

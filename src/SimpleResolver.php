@@ -19,7 +19,7 @@ class SimpleResolver extends ELResolver
     private static $DEFAULT_RESOLVER_READ_WRITE;
 
     private $root;
-    private $delegate;
+    private $delegate;    
 
     /**
      * Create a read/write resolver capable of resolving top-level identifiers. Everything else is
@@ -106,5 +106,15 @@ class SimpleResolver extends ELResolver
     public function invoke(?ELContext $context, $base, $method, array $params = [])
     {
         return $this->delegate->invoke($context, $base, $method, $params);
+    }
+
+    public function hasMetaArguments(): bool
+    {
+        return $this->root->hasMetaArguments();
+    }
+
+    public function getMetaObjectValue(?ELContext $context, string $property)
+    {
+        return $this->root->getMetaObjectValue($context, $property);
     }
 }

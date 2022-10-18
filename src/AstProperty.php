@@ -38,6 +38,18 @@ abstract class AstProperty extends AstNode
 
     public function eval(Bindings $bindings, ELContext $context)
     {
+        //if we have meta arguments and property is resolved
+        if ($context->getELResolver()->hasMetaArguments()) {
+            $metaProperty = null;
+            if ($this instanceof AstDot) {
+                $metaProperty = $this->getMetaObjectProperty();
+            }
+            $result = $context->getELResolver()->getMetaObjectValue($context, $metaProperty);
+            if ($context->isPropertyResolved()) {
+                return $result;
+            }
+        }
+        //otherwise
         $base = $this->prefix->eval($bindings, $context);
         if ($base === null) {
             return null;
@@ -47,7 +59,9 @@ abstract class AstProperty extends AstNode
             return null;
         }
         $context->setPropertyResolved(false);
+
         $result = $context->getELResolver()->getValue($context, $base, $property);
+
         if (!$context->isPropertyResolved()) {
             throw new PropertyNotFoundException(LocalMessages::get("error.property.property.notfound", $property, $base));
         }

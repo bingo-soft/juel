@@ -36,7 +36,6 @@ class TreeValueExpression extends ValueExpression
         //parent::__construct();
 
         $tree = $store->get($expr);
-
         $this->builder = $store->getBuilder();
         $this->bindings = $tree->bind($functions, $variables, $converter);
         $this->expr = $expr;

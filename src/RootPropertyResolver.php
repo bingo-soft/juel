@@ -8,12 +8,14 @@ use El\{
     PropertyNotFoundException,
     PropertyNotWritableException
 };
+use Util\Reflection\MetaObject;
 
 class RootPropertyResolver extends ELResolver
 {
     private $map = [];
     private $readOnly;
-
+    private $hasMetaArguments = false;
+    
     /**
      * Create a root property resolver
      *
@@ -54,10 +56,60 @@ class RootPropertyResolver extends ELResolver
     {
         if ($this->resolve($context, $base, $property)) {
             if (!$this->isProperty($property)) {
+                $propertyOwner = $this->getPropertyOwner($property);
+                if ($propertyOwner !== null) {
+                    return $propertyOwner->getValue($property);
+                }
                 throw new PropertyNotFoundException("Cannot find property " . $property);
             }
             return $this->getProperty($property);
         }
+        return null;
+    }
+
+    public function getPropertyOwner($property)
+    {
+        foreach ($this->map as $key => $object) {
+            if (is_object($object)) {
+                if ($object instanceof MetaObject && $object->hasGetter($property)) {
+                    return $object;
+                } elseif (property_exists($object, $property)) {
+                    return new MetaObject($object);
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public function hasMetaArguments(): bool
+    {
+        return $this->hasMetaArguments;
+    }
+
+    public function getMetaObjectValue(?ELContext $context, string $property)
+    {
+        foreach ($this->map as $key => $object) {
+            if ($object instanceof MetaObject && $object->isPropertyInitialized($property)) {
+                $context->setPropertyResolved(true);
+                return $object->getValue($property);
+            }
+        }
+        return null;
+    }
+
+    public function getMethodOwner(string $methodName)
+    {
+        foreach ($this->map as $key => $object) {
+            if (is_object($object)) {
+                if ($object instanceof MetaObject && $object->hasMethod($methodName)) {
+                    return $object;
+                } elseif (method_exists($object, $methodName)) {
+                    return new MetaObject($object);
+                }
+            }
+        }
+
         return null;
     }
 
@@ -71,6 +123,9 @@ class RootPropertyResolver extends ELResolver
         if ($this->resolve($context, $base, $property)) {
             if ($this->readOnly) {
                 throw new PropertyNotWritableException("Resolver is read only!");
+            }
+            if ($value instanceof MetaObject) {
+                $this->hasMetaArguments = true;
             }
             $this->setProperty($property, $value);
         }

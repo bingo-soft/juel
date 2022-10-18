@@ -77,7 +77,7 @@ class BooleanOperations
         if ($o1 == $o2) {
             return false;
         }
-        if ($o1 === null || $o2 === null) {
+        if ($o1 === null && $o2 === null) {
             return false;
         }
         return self::lt0($converter, $o1, $o2);
@@ -88,7 +88,7 @@ class BooleanOperations
         if ($o1 == $o2) {
             return false;
         }
-        if ($o1 === null || $o2 === null) {
+        if ($o1 === null && $o2 === null) {
             return false;
         }
         return self::gt0($converter, $o1, $o2);
@@ -97,10 +97,10 @@ class BooleanOperations
     public static function ge(TypeConverter $converter, $o1, $o2): bool
     {
         if ($o1 == $o2) {
-            return false;
+            return true;
         }
-        if ($o1 === null || $o2 === null) {
-            return false;
+        if ($o1 === null && $o2 === null) {
+            return true;
         }
         return !self::lt0($converter, $o1, $o2);
     }
@@ -108,10 +108,10 @@ class BooleanOperations
     public static function le(TypeConverter $converter, $o1, $o2): bool
     {
         if ($o1 == $o2) {
-            return false;
+            return true;
         }
-        if ($o1 === null || $o2 === null) {
-            return false;
+        if ($o1 === null && $o2 === null) {
+            return true;
         }
         return !self::gt0($converter, $o1, $o2);
     }
@@ -119,13 +119,13 @@ class BooleanOperations
     public static function eq(TypeConverter $converter, $o1, $o2): bool
     {
         if ($o1 == $o2) {
-            return false;
+            return true;
         }
-        if ($o1 === null || $o2 === null) {
-            return false;
+        if ($o1 === null && $o2 === null) {
+            return true;
         }
         $t1 = gettype($o1);
-        $t2 = gettype($o2);
+        $t2 = gettype($o2);        
         if (in_array($t1, self::$SIMPLE_FLOAT_TYPES) || in_array($t2, self::$SIMPLE_FLOAT_TYPES)) {
             return $converter->convert($o1, "double") == $converter->convert($o2, "double");
         }
