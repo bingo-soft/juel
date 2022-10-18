@@ -39,7 +39,7 @@ abstract class AstProperty extends AstNode
     public function eval(Bindings $bindings, ELContext $context)
     {
         //if we have meta arguments and property is resolved
-        if ($context->getELResolver()->hasMetaArguments()) {
+        if ($context->hasMetaArguments()) {
             $metaProperty = null;
             if ($this instanceof AstDot) {
                 $metaProperty = $this->getMetaObjectProperty();

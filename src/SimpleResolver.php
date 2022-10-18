@@ -108,11 +108,6 @@ class SimpleResolver extends ELResolver
         return $this->delegate->invoke($context, $base, $method, $params);
     }
 
-    public function hasMetaArguments(): bool
-    {
-        return $this->root->hasMetaArguments();
-    }
-
     public function getMetaObjectValue(?ELContext $context, string $property)
     {
         return $this->root->getMetaObjectValue($context, $property);

@@ -14,7 +14,6 @@ class RootPropertyResolver extends ELResolver
 {
     private $map = [];
     private $readOnly;
-    private $hasMetaArguments = false;
     
     /**
      * Create a root property resolver
@@ -82,11 +81,6 @@ class RootPropertyResolver extends ELResolver
         return null;
     }
 
-    public function hasMetaArguments(): bool
-    {
-        return $this->hasMetaArguments;
-    }
-
     public function getMetaObjectValue(?ELContext $context, string $property)
     {
         foreach ($this->map as $key => $object) {
@@ -124,8 +118,8 @@ class RootPropertyResolver extends ELResolver
             if ($this->readOnly) {
                 throw new PropertyNotWritableException("Resolver is read only!");
             }
-            if ($value instanceof MetaObject) {
-                $this->hasMetaArguments = true;
+            if ($value instanceof MetaObject && $context !== null) {
+                $context->setMetaArguments(true);
             }
             $this->setProperty($property, $value);
         }

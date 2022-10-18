@@ -17,8 +17,8 @@
     },
     "require": {
         "php": "^7.4 || ^8.0",
-        "bingo-soft/el": "^1.0",
-        "bingo-soft/util": "^1.2"
+        "bingo-soft/util": "^1.2",
+        "bingo-soft/el": "^1.1"
     },
     "require-dev": {
         "doctrine/coding-standard": "*",
