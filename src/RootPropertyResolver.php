@@ -118,9 +118,6 @@ class RootPropertyResolver extends ELResolver
             if ($this->readOnly) {
                 throw new PropertyNotWritableException("Resolver is read only!");
             }
-            if ($value instanceof MetaObject && $context !== null) {
-                $context->setMetaArguments(true);
-            }
             $this->setProperty($property, $value);
         }
     }
