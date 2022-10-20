@@ -10,5 +10,5 @@ interface TreeBuilder
      * @return tree corresponding to the given expression
      * @throws ELException on parse error
      */
-    public function build(string $expression): Tree;
+    public function build(?string $expression): Tree;
 }

@@ -6,7 +6,7 @@ class Cache implements TreeCache
 {
     private $cache = [];
 
-    public function get(string $expression): ?Tree
+    public function get(?string $expression): ?Tree
     {
         $tree = null;
         if (array_key_exists($expression, $this->cache)) {
@@ -15,8 +15,10 @@ class Cache implements TreeCache
         return $tree;
     }
 
-    public function put(string $expression, Tree $tree): void
+    public function put(?string $expression, Tree $tree): void
     {
-        $this->cache[$expression] = $tree;
+        if ($expression !== null) {
+            $this->cache[$expression] = $tree;
+        }
     }
 }

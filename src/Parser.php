@@ -20,13 +20,13 @@ class Parser
 
     protected $extensions = [];
 
-    public function __construct(Builder $context, string $input)
+    public function __construct(Builder $context, ?string $input)
     {
         $this->context = $context;
         $this->scanner = $this->createScanner($input);
     }
 
-    protected function createScanner(string $expression): Scanner
+    protected function createScanner(?string $expression): Scanner
     {
         return new Scanner($expression);
     }

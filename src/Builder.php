@@ -30,7 +30,7 @@ class Builder implements TreeBuilder
     /**
      * Parse expression.
      */
-    public function build(string $expression): Tree
+    public function build(?string $expression): Tree
     {
         try {
             return $this->createParser($expression)->tree();
@@ -43,7 +43,7 @@ class Builder implements TreeBuilder
         }
     }
 
-    protected function createParser(string $expression): Parser
+    protected function createParser(?string $expression): Parser
     {
         return new Parser($this, $expression);
     }

@@ -31,7 +31,7 @@ class TreeStore
      * @param expression expression string
      * @return expression tree
      */
-    public function get(string $expression): Tree
+    public function get(?string $expression): Tree
     {
         if ($this->cache === null) {
             return $this->builder->build($expression);
