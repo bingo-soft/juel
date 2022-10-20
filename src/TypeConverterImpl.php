@@ -6,7 +6,7 @@ use El\ELException;
 
 class TypeConverterImpl extends TypeConverter
 {
-    private const BUILT_IN_TYPES = ['boolean', 'bool', 'double', 'float', 'int', 'integer', 'string'];
+    private const BUILT_IN_TYPES = ['boolean', 'bool', 'double', 'float', 'int', 'integer', 'string', 'array'];
     private function throwException($value, string $shouldBe)
     {
         $type = gettype($value);
@@ -89,6 +89,21 @@ class TypeConverterImpl extends TypeConverter
         }
     }
 
+    protected function coerceToArray($value): array
+    {
+        if (is_array($value)) {
+            return $value;
+        }
+        if (is_string($value)) {
+            try {
+                return json_decode($value, true);
+            } catch (\Exception $e) {
+                $this->throwException($value, "array");
+            }
+        }
+        $this->throwException($value, "array");
+    }
+
     protected function coerceStringToType(string $value, string $type)
     {
         return $this->coerceToType($value, $type);
@@ -108,6 +123,8 @@ class TypeConverterImpl extends TypeConverter
                 return $this->coerceToInteger($value);
             case "string":
                 return $this->coerceToString($value);
+            case "array":
+                return $this->coerceToArray($value);
         }
         if (gettype($value) == "object" && get_class($value) == $type) {
             return $value;
