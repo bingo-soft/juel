@@ -224,4 +224,14 @@ class ExpressionLanguageTest extends TestCase
         $expr = $factory->createValueExpression($context, '${richType.richType.richField + 11 + beta2() + richType.richField + alpha1}', null, "integer");
         $this->assertEquals(151, $expr->getValue($context));
     }
+
+    public function testNullObjectPropertyExpression(): void
+    {
+        $context = new SimpleContext();
+        $simple = new Bean(null);
+        $factory = new ExpressionFactoryImpl();
+        $context->getELResolver()->setValue($context, null, "base", $simple);
+        $expr = $factory->createValueExpression($context, '${id}', null, "object");
+        $this->assertNull($expr->getValue($context));
+    }
 }
