@@ -48,11 +48,14 @@ class AstFunction extends AstRightValue implements FunctionNode
         }
         $params = [];
         for ($i = 0; $i < count($parameters); $i++) {
-            $param = $this->getParam($i)->eval($bindings, $context);
-            if ($param !== null && $types[$i] != "undefined") {
-                $params[$i] = $bindings->convert($param, $types[$i]);
-            } else {
-                $params[$i] = $param;
+            $node = $this->getParam($i);
+            if ($node !== null) {
+                $param = $node->eval($bindings, $context);
+                if ($param !== null && $types[$i] != "undefined") {
+                    $params[$i] = $bindings->convert($param, $types[$i]);
+                } else {
+                    $params[$i] = $param;
+                }
             }
         }
         if ($method instanceof \ReflectionMethod) {
@@ -81,11 +84,11 @@ class AstFunction extends AstRightValue implements FunctionNode
                 }
             }
         }
-        try {
+        /*try {*/
             return $this->invoke($bindings, $context, $base, $method);
-        } catch (\Exception $e) {
+        /*} catch (\Exception $e) {
             throw new ELException(LocalMessages::get("error.function.invocation", $this->name));
-        }
+        }*/
     }
 
     public function __toString()

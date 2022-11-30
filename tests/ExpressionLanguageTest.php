@@ -253,4 +253,14 @@ class ExpressionLanguageTest extends TestCase
         $expr = $factory->createValueExpression($context, ' ${ [ @\Tests\ExpressionLanguageTest::TEST_CONST, @\Tests\ExpressionLanguageTest::$field ] } ', null, "array");
         $this->assertEquals(["test", "field"], $expr->getValue($context));
     }
+
+    public function testInArrayExpression(): void
+    {
+        $context = new SimpleContext();
+        $factory = new ExpressionFactoryImpl();
+        $expr = $factory->createValueExpression($context, ' ${ !in_array(@\Tests\ExpressionLanguageTest::TEST_CONST, ["test" , null]) } ', null, "boolean");
+        $this->assertFalse($expr->getValue($context));
+    }
+
+    //@TODO implement "$value IN $list" && "$value NOT IN $list" && "NOT $value IN $list"
 }
