@@ -57,7 +57,7 @@ class ExpressionFactoryImpl extends ExpressionFactory
         return $this->converter->convert($obj, $targetType);
     }
 
-    public function createValueExpression(?ELContext $context = null, ?string $expression = null, $instance = null, ?string $expectedType = null): ValueExpression
+    public function createValueExpression(?ELContext $context = null, ?string $expression = "", $instance = null, ?string $expectedType = null): ValueExpression
     {
         if ($instance !== null) {
             return new ObjectValueExpression($this->converter, $instance, $expectedType);
@@ -67,7 +67,7 @@ class ExpressionFactoryImpl extends ExpressionFactory
             $context->getFunctionMapper(),
             $context->getVariableMapper(),
             $this->converter,
-            $expression,
+            trim($expression),
             $expectedType
         );
     }

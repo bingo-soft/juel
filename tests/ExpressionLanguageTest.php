@@ -18,6 +18,9 @@ use Util\Reflection\MetaObject;
 
 class ExpressionLanguageTest extends TestCase
 {
+    public const TEST_CONST = 'test';
+    public static $field = 'field';
+
     public function testNumericVariables(): void
     {
         $factory = new ExpressionFactoryImpl();
@@ -233,5 +236,21 @@ class ExpressionLanguageTest extends TestCase
         $context->getELResolver()->setValue($context, null, "base", $simple);
         $expr = $factory->createValueExpression($context, '${id}', null, "object");
         $this->assertNull($expr->getValue($context));
+    }
+
+    public function testStaticArrayExpression(): void
+    {
+        $context = new SimpleContext();
+        $factory = new ExpressionFactoryImpl();
+        $expr = $factory->createValueExpression($context, ' ${ [1 , "2"] } ', null, "array");
+        $this->assertEquals([1, "2"], $expr->getValue($context));
+    }
+
+    public function testClassConstantExpression(): void
+    {
+        $context = new SimpleContext();
+        $factory = new ExpressionFactoryImpl();
+        $expr = $factory->createValueExpression($context, ' ${ [ @\Tests\ExpressionLanguageTest::TEST_CONST, @\Tests\ExpressionLanguageTest::$field ] } ', null, "array");
+        $this->assertEquals(["test", "field"], $expr->getValue($context));
     }
 }

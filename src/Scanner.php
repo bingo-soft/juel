@@ -52,6 +52,7 @@ class Scanner
             self::addFixToken(new Token(Symbol::START_EVAL_DYNAMIC, '${'));
             self::addFixToken(new Token(Symbol::END_EVAL, "}"));
             self::addFixToken(new Token(Symbol::EOF, null, 0));
+            self::addFixToken(new Token(Symbol::CLASS_STATIC_CALL, '@'));
 
             self::addKeyToken(new Token(Symbol::NULL, "null"));
             self::addKeyToken(new Token(Symbol::TRUE, "true"));
@@ -160,7 +161,7 @@ class Scanner
                         if ($escaped) {
                             $this->builder .= $c;
                         } else {
-                            return token(Symbol::TEXT, $this->builder, $i - $this->position);
+                            return $this->token(Symbol::TEXT, $this->builder, $i - $this->position);
                         }
                     } else {
                         if ($escaped) {
@@ -280,6 +281,10 @@ class Scanner
                 return $this->fixed(Symbol::LBRACK);
             case ']':
                 return $this->fixed(Symbol::RBRACK);
+            case '{':
+                return $this->fixed(Symbol::LBRACE);
+            case '}':
+                return $this->fixed(Symbol::RBRACE);
             case '(':
                 return $this->fixed(Symbol::LPAREN);
             case ')':
@@ -338,9 +343,19 @@ class Scanner
             }
             $name = substr($this->input, $this->position, $i - $this->position);
             $keyword = $this->keyword($name);
-            return $keyword === null ? $this->token(Symbol::IDENTIFIER, $name, $i - $this->position) : $keyword;
+            return $keyword ?? $this->token(Symbol::IDENTIFIER, $name, $i - $this->position);
         }
 
+        if ($c1 == '@') {
+            $i = $this->position + 1;
+            $l = strlen($this->input);
+            while ($i < $l && preg_match('/^[a-zA-Z0-9:$\\\_]+$/', $this->input[$i])) {
+                $i++;
+            }
+            $name = substr($this->input, $this->position, $i - $this->position);
+            $keyword = $this->keyword($name);
+            return $keyword ?? $this->token(Symbol::CLASS_STATIC_CALL, $name, $i - $this->position);
+        }
         throw new ScanException($this->position, "invalid character '" . $c1 . "'", "expression token");
     }
 

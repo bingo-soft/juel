@@ -41,6 +41,8 @@ class Symbol
     public const START_EVAL_DYNAMIC = '\'${\'';
     public const END_EVAL = "'}'";
     public const EXTENSION = 'extension'; // used in syntax extensions
+    //Addon
+    public const CLASS_STATIC_CALL = "'@'";
     private $string;
 
     public function __construct(string $string)

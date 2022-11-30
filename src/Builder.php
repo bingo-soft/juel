@@ -32,15 +32,15 @@ class Builder implements TreeBuilder
      */
     public function build(?string $expression): Tree
     {
-        try {
+        /*try {*/
             return $this->createParser($expression)->tree();
-        } catch (ScanException $e) {
+        /*} catch (ScanException $e) {
             throw new TreeBuilderException($expression, $e->position, $e->encountered, $e->expected, $e->getMessage());
         } catch (ParseException $e) {
             throw new TreeBuilderException($expression, $e->position, $e->encountered, $e->expected, $e->getMessage());
         } catch (\Exception $e) {
             throw new \Exception($e->getTraceAsString());
-        }
+        }*/
     }
 
     protected function createParser(?string $expression): Parser

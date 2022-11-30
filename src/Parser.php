@@ -6,7 +6,7 @@ class Parser
 {
     private const EXPR_FIRST = Symbol::IDENTIFIER . "|" . Symbol::STRING . "|" . Symbol::FLOAT . "|" .
                                  Symbol::INTEGER . "|" . Symbol::TRUE . "|" . Symbol::FALSE . "|" . Symbol::NULL . "|" .
-                                 Symbol::MINUS . "|" . Symbol::NOT . "|" . Symbol::EMPTY . "|" . Symbol::LPAREN;
+                                 Symbol::MINUS . "|" . Symbol::NOT . "|" . Symbol::EMPTY . "|" . Symbol::LPAREN . "|" . Symbol::CLASS_STATIC_CALL;
 
     protected $context;
     protected $scanner;
@@ -110,6 +110,11 @@ class Parser
     protected function createAstIdentifier(string $name, int $index): AstIdentifier
     {
         return new AstIdentifier($name, $index);
+    }
+
+    protected function createAstClassStaticCall(string $name): AstClassStaticCall
+    {
+        return new AstClassStaticCall($name);
     }
 
     protected function createAstMethod(AstProperty $property, AstParameters $params): AstMethod
@@ -264,10 +269,14 @@ class Parser
     }
 
     /**
-     * expr := or (&lt;QUESTION&gt; expr &lt;COLON&gt; expr)?
+     * expr := {or (&lt;QUESTION&gt; expr &lt;COLON&gt; expr)?, ...}
      */
     protected function expr(bool $required): ?AstNode
     {
+        $v = $this->collection(false);
+        if ($v !== null) {
+            return $v;
+        }
         $v = $this->or($required);
         if ($v === null) {
             return null;
@@ -280,6 +289,34 @@ class Parser
             $v = $this->createAstChoice($v, $a, $b);
         }
         return $v;
+    }
+
+    /**
+     * expr := collection (expr, expr, ...)
+     */
+    protected function collection(bool $required): ?AstNode
+    {
+        $coll = null;
+        if ($this->token->getSymbol() == Symbol::LBRACK) {
+            $this->consumeToken();
+            $elements = [];
+            while ($this->token->getSymbol() != Symbol::RBRACK) {
+                $elements[] = $this->expr(true); 
+                if ($this->token->getSymbol() == Symbol::COMMA) {
+                    $this->consumeToken();
+                }
+            }
+            if ($this->token->getSymbol() == Symbol::RBRACK) {
+                $this->consumeToken(Symbol::RBRACK);
+            }
+            $coll = $this->createAstCollection($elements);
+        }
+        return $coll;
+    }
+
+    protected function createAstCollection(array $elements = []): ?AstNode
+    {
+        return new AstCollection($elements);
     }
 
     /**
@@ -399,7 +436,6 @@ class Parser
                         $v = $this->getExtensionHandler($this->consumeToken())->createAstNode($v, $this->add(true));
                         break;
                     }
-                    //
                 default:
                     return $v;
             }
@@ -496,7 +532,8 @@ class Parser
                     $v = $this->getExtensionHandler($this->consumeToken())->createAstNode($this->unary(true));
                     break;
                 }
-                //
+            case Symbol::COMMA:
+                return null;              
             default:
                 $v = $this->value();
         }
@@ -571,6 +608,9 @@ class Parser
                 } else { // identifier
                     $v = $this->identifier($name);
                 }
+                break;
+            case Symbol::CLASS_STATIC_CALL:
+                $v = $this->createAstClassStaticCall($this->consumeToken()->getImage());
                 break;
             case Symbol::LPAREN:
                 $this->consumeToken();
