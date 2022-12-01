@@ -174,9 +174,10 @@ class ExpressionLanguageTest extends TestCase
         $factory = new ExpressionFactoryImpl();
         $context->getELResolver()->setValue($context, null, "base", $simple);
         $context->getELResolver()->setValue($context, null, "var", 3.2);
+        $context->getELResolver()->setValue($context, null, "_parameter", 1);
 
-        $expr = $factory->createValueExpression($context, '${2.1 + var + propFloat + privateFloat + cos(0) + foo() + goo()}', null, "double");   
-        $this->assertEqualsWithDelta(20.17, $expr->getValue($context), 1e-14);
+        $expr = $factory->createValueExpression($context, '${2.1 + var + _parameter + propFloat + privateFloat + cos(0) + foo() + goo()}', null, "double");   
+        $this->assertEqualsWithDelta(21.17, $expr->getValue($context), 1e-14);
     }
 
     public function testMetaObjectWithOgnlSyntax(): void

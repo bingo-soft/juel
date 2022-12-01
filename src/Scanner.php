@@ -335,7 +335,7 @@ class Scanner
             return $this->nextNumber();
         }
 
-        if (preg_match('/^[a-zA-Z]+$/', $c1)) {
+        if (preg_match('/^[_a-zA-Z]+$/', $c1)) {
             $i = $this->position + 1;
             $l = strlen($this->input);
             while ($i < $l && preg_match('/^[a-zA-Z0-9_]+$/', $this->input[$i])) {
