@@ -88,6 +88,13 @@ class RootPropertyResolver extends ELResolver
                 $context->setPropertyResolved(true);
                 return $object->getValue($property);
             }
+            if (strpos($property, '.') !== false) {
+                $parts = explode('.', $property);
+                if (count($parts) == 2 && $parts[1] == 'value' && !empty($object->findProperty($parts[0]))) {
+                    $enumValue = $object->getValue($parts[0]);
+                    return $enumValue->value;
+                }
+            }
         }
         return null;
     }

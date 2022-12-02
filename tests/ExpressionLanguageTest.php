@@ -264,4 +264,18 @@ class ExpressionLanguageTest extends TestCase
     }
 
     //@TODO implement "$value IN $list" && "$value NOT IN $list" && "NOT $value IN $list"
+
+    public function testEnumType(): void
+    {
+        $context = new SimpleContext();
+        $rich1 = new RichType();
+        $rich1->setEnumType(Type::EMPLOYEE);
+        $meta1 = new MetaObject($rich1);
+        $meta1->setValue("type", Type::DIRECTOR);
+
+        $context->getELResolver()->setValue($context, null, "first", $meta1);
+        $factory = new ExpressionFactoryImpl();     
+        $expr = $factory->createValueExpression($context, '${type.value}', null, "string");
+        $this->assertEquals(Type::DIRECTOR->value, $expr->getValue($context));
+    }
 }

@@ -9,6 +9,7 @@ class RichType
     private $richProperty;
     private $richMap = [];
     private $richList = ["bar"];
+    private Type $type;
 
     public function getRichType(): RichType
     {
@@ -48,5 +49,15 @@ class RichType
     public function setRichMap(array $richMap): void
     {
         $this->richMap = $richMap;
+    }
+
+    public function setEnumType(Type $type): void
+    {
+        $this->type = $type;
+    }
+
+    public function getEnumType(): Type
+    {
+        return $this->type;
     }
 }
