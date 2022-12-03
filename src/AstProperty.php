@@ -41,9 +41,12 @@ abstract class AstProperty extends AstNode
         //if we have meta arguments and property is resolved
         $metaProperty = null;
         if ($this instanceof AstDot) {
-            $metaProperty = $this->getMetaObjectProperty();
+            $metaProperty = $this->getFullProperty();
         }
-        $result = $context->getELResolver()->getMetaObjectValue($context, $metaProperty);
+        
+        $context->setPropertyResolved(false);
+
+        $result = $context->getELResolver()->getObjectValue($context, $metaProperty);
         if ($context->isPropertyResolved()) {
             return $result;
         }
@@ -57,12 +60,11 @@ abstract class AstProperty extends AstNode
         if ($property === null && $this->strict) {
             return null;
         }
-        $context->setPropertyResolved(false);
-
+        
         $result = $context->getELResolver()->getValue($context, $base, $property);
 
         if (!$context->isPropertyResolved()) {
-            throw new PropertyNotFoundException(LocalMessages::get("error.property.property.notfound", $property, $base));
+            throw new PropertyNotFoundException(LocalMessages::get("error.property.notfound", $property, $base));
         }
         return $result;
     }
@@ -93,12 +95,12 @@ abstract class AstProperty extends AstNode
         }
         $property = $this->getProperty($bindings, $context);
         if ($property === null && $this->strict) {
-            throw new PropertyNotFoundException(LocalMessages::get("error.property.property.notfound", "null", $base));
+            throw new PropertyNotFoundException(LocalMessages::get("error.property.notfound", "null", $base));
         }
         $context->setPropertyResolved(false);
         $result = $context->getELResolver()->getType($context, $base, $property);
         if (!$context->isPropertyResolved()) {
-            throw new PropertyNotFoundException(LocalMessages::get("error.property.property.notfound", $property, $base));
+            throw new PropertyNotFoundException(LocalMessages::get("error.property.notfound", $property, $base));
         }
         return $result;
     }
@@ -114,12 +116,12 @@ abstract class AstProperty extends AstNode
         }
         $property = $this->getProperty($bindings, $context);
         if ($property === null && $this->strict) {
-            throw new PropertyNotFoundException(LocalMessages::get("error.property.property.notfound", "null", $base));
+            throw new PropertyNotFoundException(LocalMessages::get("error.property.notfound", "null", $base));
         }
         $context->setPropertyResolved(false);
         $result = $context->getELResolver()->isReadOnly($context, $base, $property);
         if (!$context->isPropertyResolved()) {
-            throw new PropertyNotFoundException(LocalMessages::get("error.property.property.notfound", $property, $base));
+            throw new PropertyNotFoundException(LocalMessages::get("error.property.notfound", $property, $base));
         }
         return $result;
     }
@@ -135,12 +137,12 @@ abstract class AstProperty extends AstNode
         }
         $property = $this->getProperty($bindings, $context);
         if ($property === null && $this->strict) {
-            throw new PropertyNotFoundException(LocalMessages::get("error.property.property.notfound", "null", $base));
+            throw new PropertyNotFoundException(LocalMessages::get("error.property.notfound", "null", $base));
         }
         $context->setPropertyResolved(false);
         $context->getELResolver()->setValue($context, $base, $property, $value);
         if (!$context->isPropertyResolved()) {
-            throw new PropertyNotFoundException(LocalMessages::get("error.property.property.notfound", $property, $base));
+            throw new PropertyNotFoundException(LocalMessages::get("error.property.notfound", $property, $base));
         }
     }
 

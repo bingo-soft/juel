@@ -81,7 +81,7 @@ class RootPropertyResolver extends ELResolver
         return null;
     }
 
-    public function getMetaObjectValue(?ELContext $context, string $property)
+    public function getObjectValue(?ELContext $context, string $property)
     {
         foreach ($this->map as $key => $object) {
             if ($object instanceof MetaObject && $object->isPropertyInitialized($property)) {
@@ -92,6 +92,7 @@ class RootPropertyResolver extends ELResolver
                 $parts = explode('.', $property);
                 if (count($parts) == 2 && $parts[1] == 'value' && !empty($object->findProperty($parts[0]))) {
                     $enumValue = $object->getValue($parts[0]);
+                    $context->setPropertyResolved(true);
                     return $enumValue->value;
                 }
             }

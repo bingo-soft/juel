@@ -19,7 +19,7 @@ class AstDot extends AstProperty
         return $this->property;
     }
 
-    public function getMetaObjectProperty(): string
+    public function getFullProperty(): string
     {
         $props = [ $this->property ];
         $flag = true;

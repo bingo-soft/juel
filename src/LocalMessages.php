@@ -12,7 +12,7 @@ class LocalMessages
         "error.identifier.method.access" => "Cannot access method '%s'",
         "error.identifier.method.invocation" => "Error invoking method '%s': %s",
         "error.property.base.null" => "Target unreachable, base expression '%s' resolved to null",
-        "error.property.property.notfound" => "Cannot resolve property '%s' in '%s'",
+        "error.property.notfound" => "Cannot resolve property '%s' in '%s'",
         "error.property.method.notfound" => "Cannot find method '%s' in '%s'",
         "error.property.method.resolve" => "Cannot resolve method '%s' in '%s'",
         "error.property.method.access" => "Cannot access method '%s' in '%s'",
