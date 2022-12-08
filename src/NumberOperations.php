@@ -97,7 +97,7 @@ class NumberOperations
         if ($o1 === null && $o2 === null) {
             return self::$LONG_ZERO;
         }
-        if (self::isBigDecimalOrFloatOrDoubleOrDotEe($o1) || self::isBigDecimalOrFloatOrDoubleOrDotEe(o2)) {
+        if (self::isBigDecimalOrFloatOrDoubleOrDotEe($o1) || self::isBigDecimalOrFloatOrDoubleOrDotEe($o2)) {
             return $converter->convert($o1, "double") % $converter->convert($o2, "double");
         }
         return $converter->convert($o1, "integer") % $converter->convert($o2, "integer");
