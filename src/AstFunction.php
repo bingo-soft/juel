@@ -84,11 +84,11 @@ class AstFunction extends AstRightValue implements FunctionNode
                 }
             }
         }
-        /*try {*/
+        try {
             return $this->invoke($bindings, $context, $base, $method);
-        /*} catch (\Exception $e) {
+        } catch (\Exception $e) {
             throw new ELException(LocalMessages::get("error.function.invocation", $this->name));
-        }*/
+        }
     }
 
     public function __toString()

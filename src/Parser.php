@@ -112,9 +112,9 @@ class Parser
         return new AstIdentifier($name, $index);
     }
 
-    protected function createAstClassStaticCall(string $name): AstClassStaticCall
+    protected function createAstClassStaticCall(string $name, ?AstParameters $params): AstClassStaticCall
     {
-        return new AstClassStaticCall($name);
+        return new AstClassStaticCall($name, $params);
     }
 
     protected function createAstMethod(AstProperty $property, AstParameters $params): AstMethod
@@ -610,7 +610,12 @@ class Parser
                 }
                 break;
             case Symbol::CLASS_STATIC_CALL:
-                $v = $this->createAstClassStaticCall($this->consumeToken()->getImage());
+                $name = $this->consumeToken()->getImage();
+                $params = null;
+                if ($this->token->getSymbol() == Symbol::LPAREN) {
+                    $params = $this->params();
+                }                
+                $v = $this->createAstClassStaticCall($name, $params);
                 break;
             case Symbol::LPAREN:
                 $this->consumeToken();

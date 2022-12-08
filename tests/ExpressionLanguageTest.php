@@ -21,6 +21,11 @@ class ExpressionLanguageTest extends TestCase
     public const TEST_CONST = 'test';
     public static $field = 'field';
 
+    public static function someFunc(int $var): int
+    {
+        return $var * 5;
+    }
+
     public function testNumericVariables(): void
     {
         $factory = new ExpressionFactoryImpl();
@@ -253,6 +258,15 @@ class ExpressionLanguageTest extends TestCase
         $factory = new ExpressionFactoryImpl();
         $expr = $factory->createValueExpression($context, ' ${ [ @\Tests\ExpressionLanguageTest::TEST_CONST, @\Tests\ExpressionLanguageTest::$field ] } ', null, "array");
         $this->assertEquals(["test", "field"], $expr->getValue($context));
+    }
+
+    public function testClassStaticMethodCallInExpression(): void
+    {
+        $context = new SimpleContext();
+        $factory = new ExpressionFactoryImpl();
+        $context->setVariable("var1", $factory->createValueExpression(null, null, 2, "integer"));
+        $expr = $factory->createValueExpression($context, '${@\Tests\ExpressionLanguageTest::someFunc(var1)}', null, "integer");
+        $this->assertEquals(10, $expr->getValue($context));
     }
 
     public function testInArrayExpression(): void

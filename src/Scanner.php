@@ -4,8 +4,8 @@ namespace Juel;
 
 class Scanner
 {
-    private static $KEYMAP = [];
-    private static $FIXMAP = [];
+    private static $keymap = [];
+    private static $fixmap = [];
 
     private $token;  // current token
     private $position = 0; // start position of current token
@@ -14,18 +14,18 @@ class Scanner
 
     private static function addFixToken(Token $token): void
     {
-        self::$FIXMAP[$token->getSymbol()] = $token;
+        self::$fixmap[$token->getSymbol()] = $token;
     }
 
     private static function addKeyToken(Token $token): void
     {
-        self::$KEYMAP[$token->getImage()] = $token;
+        self::$keymap[$token->getImage()] = $token;
     }
 
     public function __construct(?string $input)
     {
         $this->input = $input;
-        if (empty(self::$FIXMAP)) {
+        if (empty(self::$fixmap)) {
             self::addFixToken(new Token(Symbol::PLUS, "+"));
             self::addFixToken(new Token(Symbol::MINUS, "-"));
             self::addFixToken(new Token(Symbol::MUL, "*"));
@@ -108,8 +108,8 @@ class Scanner
      */
     protected function keyword(string $s): ?Token
     {
-        if (array_key_exists($s, self::$KEYMAP)) {
-            return self::$KEYMAP[$s];
+        if (array_key_exists($s, self::$keymap)) {
+            return self::$keymap[$s];
         }
         return null;
     }
@@ -120,8 +120,8 @@ class Scanner
      */
     protected function fixed(string $symbol): ?Token
     {
-        if (array_key_exists($symbol, self::$FIXMAP)) {
-            return self::$FIXMAP[$symbol];
+        if (array_key_exists($symbol, self::$fixmap)) {
+            return self::$fixmap[$symbol];
         }
         return null;
     }
