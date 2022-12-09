@@ -31,6 +31,9 @@ class AstBinary extends AstRightValue
             {
                 public function apply(TypeConverter $converter, $o1, $o2)
                 {
+                    if (gettype($o1) == 'string' && gettype($o2) == 'string') {
+                        return $o1 . $o2;
+                    }
                     return NumberOperations::add($converter, $o1, $o2);
                 }
 
@@ -259,7 +262,7 @@ class AstBinary extends AstRightValue
             self::$SUB = new class extends SimpleBinaryOperator
             {
                 public function apply(TypeConverter $converter, $o1, $o2)
-                {
+                {                    
                     return NumberOperations::sub($converter, $o1, $o2);
                 }
                 
