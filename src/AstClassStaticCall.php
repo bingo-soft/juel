@@ -8,11 +8,13 @@ class AstClassStaticCall extends AstRightValue
 {
     private $value;
     private $params;
+    private $field;
 
-    public function __construct(string $value, ?AstParameters $params)
+    public function __construct(string $value, ?AstParameters $params, ?AstIdentifier $field)
     {
         $this->value = $value;
         $this->params = $params;
+        $this->field = $field;
     }
 
     public function eval(Bindings $bindings, ELContext $context)
@@ -23,7 +25,20 @@ class AstClassStaticCall extends AstRightValue
             //static function or constant
             if (strpos($parts[1], '$') === false) {
                 if (method_exists($clazz, $parts[1])) {
-                    return $this->invoke($bindings, $context, $clazz, $parts[1]);
+                    $res = $this->invoke($bindings, $context, $clazz, $parts[1]);
+                    //if nested property need to be returned
+                    if ($this->field !== null) {
+                        $propName = $this->field->getName();
+                        $ref = new \ReflectionClass($res);
+                        if ($ref->hasProperty($propName)) {
+                            $refProp = $ref->getProperty($propName);
+                            if (!$refProp->isPublic()) {
+                                $refProp->setAccessible(true);
+                            }
+                            return $refProp->getValue($res);
+                        }
+                    }
+                    return $res;
                 }
                 return constant($clazz . '::' . $parts[1]);
             } else { //static field

@@ -52,7 +52,9 @@ class Scanner
             self::addFixToken(new Token(Symbol::START_EVAL_DYNAMIC, '${'));
             self::addFixToken(new Token(Symbol::END_EVAL, "}"));
             self::addFixToken(new Token(Symbol::EOF, null, 0));
+            //Addon
             self::addFixToken(new Token(Symbol::CLASS_STATIC_CALL, '@'));
+            self::addFixToken(new Token(Symbol::ARROW_OBJECT_OPERATOR, '->'));
 
             self::addKeyToken(new Token(Symbol::NULL, "null"));
             self::addKeyToken(new Token(Symbol::TRUE, "true"));
@@ -272,6 +274,9 @@ class Scanner
             case '+':
                 return $this->fixed(Symbol::PLUS);
             case '-':
+                if ($c2 == '>') {
+                    return $this->fixed(Symbol::ARROW_OBJECT_OPERATOR);
+                }
                 return $this->fixed(Symbol::MINUS);
             case '?':
                 return $this->fixed(Symbol::QUESTION);

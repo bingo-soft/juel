@@ -112,9 +112,9 @@ class Parser
         return new AstIdentifier($name, $index);
     }
 
-    protected function createAstClassStaticCall(string $name, ?AstParameters $params): AstClassStaticCall
+    protected function createAstClassStaticCall(string $name, ?AstParameters $params, ?AstIdentifier $field): AstClassStaticCall
     {
-        return new AstClassStaticCall($name, $params);
+        return new AstClassStaticCall($name, $params, $field);
     }
 
     protected function createAstMethod(AstProperty $property, AstParameters $params): AstMethod
@@ -614,8 +614,17 @@ class Parser
                 $params = null;
                 if ($this->token->getSymbol() == Symbol::LPAREN) {
                     $params = $this->params();
-                }                
-                $v = $this->createAstClassStaticCall($name, $params);
+                }
+                //Allow one nested field. @TODO - allow multiple nesting
+                $field = null;
+                if ($this->token->getSymbol() == Symbol::ARROW_OBJECT_OPERATOR) {
+                    $this->consumeToken();
+                    if ($this->token->getSymbol() == Symbol::IDENTIFIER) {
+                        $fieldName = $this->consumeToken()->getImage();
+                        $field = $this->identifier($fieldName);
+                    }
+                }           
+                $v = $this->createAstClassStaticCall($name, $params, $field);
                 break;
             case Symbol::LPAREN:
                 $this->consumeToken();

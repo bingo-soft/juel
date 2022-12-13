@@ -43,6 +43,8 @@ class Symbol
     public const EXTENSION = 'extension'; // used in syntax extensions
     //Addon
     public const CLASS_STATIC_CALL = "'@'";
+    public const ARROW_OBJECT_OPERATOR = "'->'";
+    
     private $string;
 
     public function __construct(string $string)

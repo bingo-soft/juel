@@ -125,6 +125,9 @@ class ExpressionLanguageTest extends TestCase
 
         $expr = $factory->createValueExpression($context, '#{null == null}', null, "boolean");
         $this->assertTrue($expr->getValue($context));
+
+        $expr = $factory->createValueExpression($context, '${!true}', null, "boolean");
+        $this->assertFalse($expr->getValue($context));
     }
 
     public function testMethodInvocation(): void
@@ -267,6 +270,14 @@ class ExpressionLanguageTest extends TestCase
         $context->setVariable("var1", $factory->createValueExpression(null, null, 2, "integer"));
         $expr = $factory->createValueExpression($context, '${@\Tests\ExpressionLanguageTest::someFunc(var1)}', null, "integer");
         $this->assertEquals(10, $expr->getValue($context));
+    }
+
+    public function testClassStaticMethodCallAndOneNestedProtectedField(): void
+    {
+        $context = new SimpleContext();
+        $factory = new ExpressionFactoryImpl();
+        $expr = $factory->createValueExpression($context, '${@\Tests\SimpleClass::getBean()->field}', null, "string");
+        $this->assertEquals('value', $expr->getValue($context));
     }
 
     public function testInArrayExpression(): void

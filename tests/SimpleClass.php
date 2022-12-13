@@ -18,6 +18,8 @@ class SimpleClass
 
     public SimpleClass $simple;
 
+    private static $bean;
+
     public function getSimpleType(): SimpleClass
     {
         return $this->simple;
@@ -63,5 +65,13 @@ class SimpleClass
     public function beta2(): int
     {
         return 6;
+    }
+
+    public static function getBean(): Bean
+    {
+        if (self::$bean === null) {
+            self::$bean = new Bean(null);
+        }
+        return self::$bean;
     }
 }

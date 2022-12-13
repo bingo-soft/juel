@@ -6,6 +6,8 @@ class Bean
 {
     public $id;
 
+    protected $field = 'value';
+
     public function __construct(?string $property)
     {
         $this->id = $property;
