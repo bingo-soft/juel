@@ -10,8 +10,9 @@ class RichType
     private $richMap = [];
     private $richList = ["bar"];
     private Type $type;
+    private $candidateGroups = [1, 2];
 
-    public function getRichType(): RichType
+    public function getRichType(): ?RichType
     {
         return $this->richType;
     }
@@ -59,5 +60,10 @@ class RichType
     public function getEnumType(): Type
     {
         return $this->type;
+    }
+
+    public function getCandidateGroups(): array
+    {
+        return [1, 2, 3];
     }
 }

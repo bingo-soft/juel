@@ -303,4 +303,19 @@ class ExpressionLanguageTest extends TestCase
         $expr = $factory->createValueExpression($context, '${type.value}', null, "string");
         $this->assertEquals(Type::DIRECTOR->value, $expr->getValue($context));
     }
+
+    public function testFieldOverloadWithGetter(): void
+    {
+        $context = new SimpleContext();
+        $rich1 = new RichType();
+        $meta1 = new MetaObject($rich1);
+        $context->getELResolver()->setValue($context, null, "first", $meta1);
+
+        $factory = new ExpressionFactoryImpl();  
+        $expr = $factory->createValueExpression($context, '${candidateGroups}', null, "object");
+        $this->assertCount(3, $expr->getValue($context));
+
+        $expr = $factory->createValueExpression($context, '${empty(candidateGroups)}', null, "bool");
+        $this->assertFalse($expr->getValue($context));
+    }
 }

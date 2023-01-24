@@ -13,7 +13,7 @@ class Bean
         $this->id = $property;
     }
 
-    public function getId(): string
+    public function getId(): ?string
     {
         return $this->id;
     }
