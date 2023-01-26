@@ -46,9 +46,12 @@ abstract class AstProperty extends AstNode
         
         $context->setPropertyResolved(false);
 
-        $result = $context->getELResolver()->getObjectValue($context, $metaProperty);
-        if ($context->isPropertyResolved()) {
-            return $result;
+        $resolver = $context->getELResolver();
+        if (method_exists($resolver, 'getObjectValue')) {
+            $result = $resolver->getObjectValue($context, $metaProperty);
+            if ($context->isPropertyResolved()) {
+                return $result;
+            }
         }
         
         //otherwise
