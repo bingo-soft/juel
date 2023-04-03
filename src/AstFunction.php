@@ -39,7 +39,7 @@ class AstFunction extends AstRightValue implements FunctionNode
         if (!empty($parameters)) {
             foreach ($parameters as $param) {
                 $type = $param->getType();
-                if ($type !== null) {
+                if ($type !== null && !($type instanceof \ReflectionUnionType)) {
                     $types[] = $type->getName();
                 } else {
                     $types[] = "undefined";
