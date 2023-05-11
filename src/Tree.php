@@ -92,10 +92,10 @@ class Tree
                     //throw new ELException(LocalMessages::get("error.function.notfound", $image));
                 }
                 if ($node->isVarArgs() && $method !== null && $method->isVariadic()) {
-                    if ($method->getNumberOfParameters() > $node->getParamCount() + 1) {
+                    if ($method->getNumberOfRequiredParameters() > $node->getParamCount() + 1) {
                         throw new ELException(LocalMessages::get("error.function.params", $image));
                     }
-                } elseif ($method !== null && $method->getNumberOfParameters() != $node->getParamCount()) {
+                } elseif ($method !== null && $method->getNumberOfRequiredParameters() != $node->getParamCount()) {
                     throw new ELException(LocalMessages::get("error.function.params", $image));
                 }
                 $methods[$node->getIndex()] = $method;
