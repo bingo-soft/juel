@@ -73,7 +73,8 @@ class AstFunction extends AstRightValue implements FunctionNode
         $base = null;
         if ($method === null && function_exists($this->name)) {
             $method = new \ReflectionFunction($this->name);
-        } else {//Check context variables
+        } elseif (!($method instanceof \ReflectionFunction)) {
+            //Check context variables
             $resolver = $context->getELResolver()->getRootPropertyResolver();
             $methodOwner = $resolver->getMethodOwner($this->name);
             if ($methodOwner !== null) {
