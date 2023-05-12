@@ -27,7 +27,7 @@ class Bindings extends TypeConverter implements \Serializable
      * @param index function index
      * @return method
      */
-    public function getFunction(int $index): ?\ReflectionMethod
+    public function getFunction(int $index)
     {
         if (array_key_exists($index, $this->functions)) {
             return $this->functions[$index];
