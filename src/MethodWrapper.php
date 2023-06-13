@@ -2,7 +2,7 @@
 
 namespace Juel;
 
-class MethodWrapper implements \Serializable
+class MethodWrapper
 {
     public $method;
     public $name;
@@ -29,23 +29,22 @@ class MethodWrapper implements \Serializable
         $this->parameterTypes = $types;
     }
 
-    public function serialize()
+    public function __serialize(): array
     {
-        return json_encode([
+        return [
             'name' => $this->name,
             'class' => $this->class,
             'parameterTypes' => $this->parameterTypes
-        ]);
+        ];
     }
 
-    public function unserialize($data)
+    public function __unserialize(array $data): void
     {
-        $json = json_decode($data);
-        $this->name = $json->name;
-        $this->class = $json->class;
-        $this->parameterTypes = $json->parameterTypes;
+        $this->name = $data['name'];
+        $this->class = $data['class'];
+        $this->parameterTypes = $data['parameterTypes'];
 
-        $class = $class = new \ReflectionClass($this->class);
+        $class = new \ReflectionClass($this->class);
         $methods = $class->getMethods();
         foreach ($methods as $method) {
             if ($method->name == $this->name) {

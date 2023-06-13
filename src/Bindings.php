@@ -4,7 +4,7 @@ namespace Juel;
 
 use El\ValueExpression;
 
-class Bindings extends TypeConverter implements \Serializable
+class Bindings extends TypeConverter
 {
     private static $NO_FUNCTIONS = [];
     private static $NO_VARIABLES = [];
@@ -92,26 +92,25 @@ class Bindings extends TypeConverter implements \Serializable
         return false;
     }
 
-    public function serialize()
+    public function __serialize()
     {
         $wrappers = [];
         foreach ($this->functions as $function) {
             $wrappers = serialize(new MethodWrapper($function));
         }
-        return json_encode([
+        return [
             'wrappers' => $wrappers,
             'converter' => serialize($this->converter)
-        ]);
+        ];
     }
 
-    public function unserialize($data)
+    public function __unserialize($data)
     {
-        $json = json_decode($data);
-        $wrappers = $json->wrappers;
+        $wrappers = $data['wrappers'];
         foreach ($wrappers as $wrapper) {
             $wrapperObj = unserialize($wrapper);
             $this->functions[] = $wrapperObj->method;
         }
-        $this->converter = unserialize($json->converter);
+        $this->converter = unserialize($data['converter']);
     }
 }
