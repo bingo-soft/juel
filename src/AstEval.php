@@ -46,14 +46,14 @@ class AstEval extends AstNode
 
     public function __toString()
     {
-        return ($this->deferred ? "#" : "$") . "{...}";
+        return ($this->deferred ? '#' : '$') . '{...}';
     }
 
     public function appendStructure(string &$b, Bindings $bindings): void
     {
-        $b .= $this->deferred ? "#{" : "${";
+        $b .= $this->deferred ? '#{' : '${';
         $this->child->appendStructure($b, $bindings);
-        $b .= "}";
+        $b .= '}';
     }
 
     public function getMethodInfo(Bindings $bindings, ELContext $context, ?string $returnType = null): ?MethodInfo
